@@ -27,9 +27,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                dir('maven-code/spring-boot-backend') {
-                   sh 'mvn clean package'
-               } 
+                sh 'mvn clean package' 
            }
         }
 
