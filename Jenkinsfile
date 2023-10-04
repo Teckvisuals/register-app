@@ -22,7 +22,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: ''Teckvisuals-Git-Cred', url: 'https://github.com/Teckvisuals/register-app'
+                    git branch: 'main', credentialsId: 'Teckvisuals-Git-Cred', url: 'https://github.com/Teckvisuals/register-app'
                 }
         }
 
