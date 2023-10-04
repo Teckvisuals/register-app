@@ -1,115 +1,115 @@
 pipeline {
     agent any
-    tools {
-        jdk 'java-17-openjdk'
-        maven 'maven3'
-    }
+
     environment {
-	    APP_NAME = "register-app-pipeline"
-            RELEASE = "1.0.0"
-            DOCKER_USER = "teckvisuals"
-            DOCKER_PASS = 'teckvisuals-docker'
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-	    JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
+        APP_NAME = 'Teckvisuals-sample-project'
+        RELEASE = '1.0.0'
+        DOCKER_USER = 'teckvisuals'
+        GITHUB_URL = 'https://github.com/Teckvisuals/register-app.git'
+        JENKINS_SERVER_URL = 'http://35.183.51.38:8080'
     }
-    stages{
-        stage("Cleanup Workspace"){
-                steps {
+
+    stages {
+        stage('Cleanup Workspace') {
+            steps {
                 cleanWs()
-                }
+            }
         }
 
-        stage("Checkout from SCM"){
-                steps {
-                    git branch: 'main', credentialsId: 'Teckvisuals-Git-Cred', url: 'https://github.com/Teckvisuals/register-app'
-                }
-        }
-
-        stage("Build Application"){
+        stage('Checkout from SCM') {
             steps {
-                sh "mvn clean package"
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: 'dev']], 
+                    userRemoteConfigs: [[url: GITHUB_URL, credentialsId: 'Teckvisuals-Git-Cred']]
+                ])
             }
-
-       }
-
-       stage("Test Application"){
-           steps {
-                 sh "mvn test"
-           }
-       }
-
-       stage("SonarQube Analysis"){
-           steps {
-	           script {
-		        withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') { 
-                        sh "mvn sonar:sonar"
-		        }
-	           }	
-           }
-       }
-
-       stage("Quality Gate"){
-           steps {
-               script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
-                }	
-            }
-
         }
 
-        stage("Build & Push Docker Image") {
+        stage('Build Application') {
+            steps {
+                dir('maven-code/spring-boot-backend') {
+                   sh 'mvn clean package'
+               } 
+           }
+        }
+
+        stage('Test Application') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Sonarqube Analysis') {
             steps {
                 script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
+                    def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withSonarQubeEnv(credentialsId: 'Sonar-Jenks-Cred', installationName: scannerHome) {
+                        sh 'mvn clean compile sonar:sonar'
                     }
                 }
             }
+        }
 
-       }
-
-       stage("Trivy Scan") {
-           steps {
-               script {
-	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ashfaque9x/register-app-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
-               }
-           }
-       }
-
-       stage ('Cleanup Artifacts') {
-           steps {
-               script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
-               }
-          }
-       }
-
-       stage("Trigger CD Pipeline") {
+        stage('Quality Gate') {
             steps {
-                script {
-                    sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-13-232-128-192.ap-south-1.compute.amazonaws.com:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops-token'"
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
-       }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+                    def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                script {
+                    def DOCKERHUB_CREDENTIALS = credentials('teckvisuals-docker')
+                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        sh "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    def IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+                    def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                }
+            }
+        }
+
+        stage('Trigger CD Pipeline') {
+            steps {
+                script {
+                    def JENKINS_API_TOKEN = credentials('JENKINS_API_TOKEN')
+                    def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+                    sh "curl -v -k --user Ajoke:$JENKINS_API_TOKEN -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=$IMAGE_TAG' '$JENKINS_SERVER_URL/job/teckvisuals-CD-job/buildWithParameters?token=gitops-token'"
+                }
+            }
+        }
     }
 
     post {
-       failure {
-             emailext body: '''${SCRIPT, template="groovy-html.template"}''', 
-                      subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
-                      mimeType: 'text/html',to: "teckvisuals1@gmail.com"
-      }
-      success {
-            emailext body: '''${SCRIPT, template="groovy-html.template"}''', 
-                     subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful", 
-                     mimeType: 'text/html',to: "teckvisuals1@gmail.com"
-      }      
-   }
+        failure {
+            emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
+            body: 'The build has failed. Check the Jenkins console for more details.',
+            to: 'ajokecloud@gmail.com'
+        }
+        success {
+            emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
+            body: "The build was successful. You can access the artifacts at $JENKINS_SERVER_URL/job/\${env.JOB_NAME}/\${env.BUILD_NUMBER}/artifact/",
+            to: 'ajokecloud@gmail.com'
+        }
+    }
 }
