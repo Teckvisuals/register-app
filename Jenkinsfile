@@ -19,7 +19,7 @@ pipeline {
         stage('Checkout from SCM') {
             steps {
                 checkout([$class: 'GitSCM', 
-                    branches: [[name: 'dev']], 
+                    branches: [[name: 'main']], 
                     userRemoteConfigs: [[url: GITHUB_URL, credentialsId: 'Teckvisuals-Git-Cred']]
                 ])
             }
