@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         jdk 'java-17-openjdk'
-        maven 'Maven3'
+        maven 'maven3'
     }
     environment {
 	    APP_NAME = "register-app-pipeline"
