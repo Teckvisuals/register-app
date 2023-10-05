@@ -41,6 +41,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'Sonar-Jenks-Cred') {
+                        sh 'sonar-scanner'
                         sh 'mvn clean compile sonar:sonar'
                     }
                 }
