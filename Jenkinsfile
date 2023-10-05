@@ -40,8 +40,7 @@ pipeline {
         stage('Sonarqube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                    withSonarQubeEnv(credentialsId: 'Sonar-Jenks-Cred', installationName: scannerHome) {
+                    withSonarQubeEnv(credentialsId: 'Sonar-Jenks-Cred') {
                         sh 'mvn clean compile sonar:sonar'
                     }
                 }
