@@ -5,7 +5,7 @@ pipeline {
         APP_NAME = 'Teckvisuals-sample-project'
         RELEASE = '1.0.0'
         DOCKER_USER = 'teckvisuals'
-        GITHUB_URL = 'https://github.com/Teckvisuals/register-app.git'
+        GITHUB_URL = 'https://github.com/teckvisuals/register-app.git'
         JENKINS_SERVER_URL = 'http://3.96.131.176:8080'
     }
 
