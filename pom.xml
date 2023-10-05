@@ -16,7 +16,7 @@
     <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
     <!-- SonarQube properties -->
     <sonar.host.url>http:99.79.9.35:9000</sonar.host.url>
-    <sonar.login>your-sonarqube-auth-token</sonar.login>
+    <sonar.login>Sonar-Jenks-Cred</sonar.login>
   </properties>
 
   <modules>
