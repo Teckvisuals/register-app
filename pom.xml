@@ -20,8 +20,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.host.url>http://99.79.9.35:9000</sonar.host.url>
-    <sonar.login>teckvisuals</sonar.login>
-    <sonar.password>teckvisuals2023</sonar.password>
+    <!--<sonar.login>teckvisuals</sonar.login>
+    <sonar.password>teckvisuals2023</sonar.password> -->
            
   </properties>
 
