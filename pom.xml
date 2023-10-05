@@ -100,7 +100,9 @@
         <artifactId>servlet-api</artifactId>
         <version>2.5</version>
       </dependency>
-      <!-- Add other managed dependencies here -->
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20160212</version>
     </dependencies>
   </dependencyManagement>
 
