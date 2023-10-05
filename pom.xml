@@ -17,8 +17,10 @@
     <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
     
     <!-- SonarQube properties -->
-    <sonar.host.url>http://99.79.9.35:9000</sonar.host.url>
-    <sonar.login>jenkins-token</sonar.login>
+    <sonar.host.url>http://99.79.9.35:9000/</sonar.host.url>
+    <sonar.login>teckvisuals</sonar.login>
+    <sonar.password>teckvisuals2023</sonar.password>
+           
   </properties>
 
   <distributionManagement>
