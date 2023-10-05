@@ -1,12 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion> 
+  <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.example.maven-project</groupId>
   <artifactId>maven-project</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Maven Project</name>
   <description>Sample Maven project with a working, deployable site.</description>
   <url>http://www.example.com</url>
@@ -14,17 +15,23 @@
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
+    
     <!-- SonarQube properties -->
-    <sonar.host.url>http:99.79.9.35:9000</sonar.host.url>
-    <sonar.login>Sonar-Jenks-Cred</sonar.login>
+    <sonar.host.url>http://99.79.9.35:9000</sonar.host.url>
+    <sonar.login>jenkins-token</sonar.login>
   </properties>
 
-  <modules>
-    <module>server</module>
-    <module>webapp</module>
-  </modules>
-
   <distributionManagement>
+    <repository>
+      <id>nexus-releases</id>
+      <name>Internal Nexus Repository - Releases</name>
+      <url>https://nexus.example.com/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <name>Internal Nexus Repository - Snapshots</name>
+      <url>https://nexus.example.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
     <site>
       <id>site-server</id>
       <name>Test Project Site</name>
@@ -36,55 +43,43 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
+      
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.3.2</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
+      
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
+      
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
+        <version>3.9.1</version>
         <configuration>
           <reportPlugins>
             <plugin>
               <artifactId>maven-checkstyle-plugin</artifactId>
+              <version>3.1.1</version>
             </plugin>
-            <plugin>
-              <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-            <plugin>
-              <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-              <artifactId>maven-pmd-plugin</artifactId>
-            </plugin>
-            <plugin>
-              <artifactId>maven-surefire-report-plugin</artifactId>
-            </plugin>
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>findbugs-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>taglist-maven-plugin</artifactId>
-            </plugin>
+            <!-- Add other report plugins here -->
           </reportPlugins>
         </configuration>
       </plugin>
+      
       <!-- SonarQube configuration -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
@@ -96,7 +91,12 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Your dependency management section here -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+      </dependency>
+      <!-- Add other managed dependencies here -->
     </dependencies>
   </dependencyManagement>
 
@@ -108,8 +108,17 @@
   </scm>
 
   <prerequisites>
-    <maven>3.0.3</maven>
+    <maven>3.9.4</maven>
   </prerequisites>
 
+  <repositories>
+    <repository>
+      <id>nexus-public</id>
+      <name>Public Nexus Repository</name>
+      <url>http://3.98.58.56:8081</url>
+    </repository>
+  </repositories>
+
 </project>
+
 
