@@ -6,7 +6,7 @@ pipeline {
         RELEASE = '1.0.0'
         DOCKER_USER = 'teckvisuals'
         GITHUB_URL = 'https://github.com/Teckvisuals/register-app.git'
-        JENKINS_SERVER_URL = 'http://35.183.51.38:8080'
+        JENKINS_SERVER_URL = 'http://3.96.131.176:8080'
     }
 
     stages {
