@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = 'Teckvisuals-sample-project'
+        APP_NAME = 'teckvisuals-sample-project'
         RELEASE = '1.0.0'
         DOCKER_USER = 'teckvisuals'
         GITHUB_URL = 'https://github.com/teckvisuals/register-app.git'
