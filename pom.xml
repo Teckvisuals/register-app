@@ -20,9 +20,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.host.url>http://99.79.9.35:9000</sonar.host.url>
-    <!--<sonar.login>teckvisuals</sonar.login>
-    <sonar.password>teckvisuals2023</sonar.password> -->
-           
   </properties>
 
   <distributionManagement>
@@ -99,11 +96,8 @@
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>2.5</version>
-               
       </dependency>
-     <!-- <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20160212</version> -->
+      <!-- Define your other dependencies here -->
     </dependencies>
   </dependencyManagement>
 
@@ -127,5 +121,3 @@
   </repositories>
 
 </project>
-
-
