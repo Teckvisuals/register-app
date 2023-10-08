@@ -101,12 +101,12 @@ pipeline {
         failure {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
             body: 'The build has failed. Check the Jenkins console for more details.',
-            to: 'teckvisual1@gmail.com'
+            to:'teckvisual1@gmail.com'
         }
         success {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
             body: "The build was successful. You can access the artifacts at $JENKINS_SERVER_URL/job/\${env.JOB_NAME}/\${env.BUILD_NUMBER}/artifact/",
-            to: 'teckvisual1@gmail.com'
+            to:'teckvisual1@gmail.com'
         }
     }
 }
