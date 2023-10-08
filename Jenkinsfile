@@ -31,13 +31,13 @@ pipeline {
 
         stage("Build Application") {
             steps {
-                sh "mvn clean package"
+                sh 'mvn clean package'
             }
         }
 
         stage("Test Application") {
             steps {
-                sh "mvn test"
+                sh 'mvn test'
             }
         }
 
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'Sonar-Jenks-Cred') { 
-                        sh "mvn sonar:sonar"
+                        sh 'mvn sonar:sonar'
                     }
                 }
             }
@@ -74,7 +74,7 @@ pipeline {
         stage("Trivy Scan") {
             steps {
                 script {
-                    sh 'docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image "${IMAGE_NAME}:${IMAGE_TAG}" --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table'
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${IMAGE_NAME}:${IMAGE_TAG} --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table"
                 }
             }
         }
@@ -102,13 +102,13 @@ pipeline {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
                       body: "${SCRIPT, template='groovy-html.template'}",
                       mimeType: 'text/html',
-                      to: "teckvisuals10@gmail.com"
+                      to: "ashfaque.s510@gmail.com"
         }
         success {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
                       body: "${SCRIPT, template='groovy-html.template'}",
                       mimeType: 'text/html',
-                      to: "teckvisuals1@gmail.com"
+                      to: "ashfaque.s510@gmail.com"
         }
     }
 }
