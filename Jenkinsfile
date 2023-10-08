@@ -1,9 +1,6 @@
 pipeline {
     agent { label 'Agent-1' }
-    tools {
-        jdk 'Java17'
-        maven 'Maven3'
-    }
+    
     environment {
         APP_NAME = 'teckvisuals-sample-project'
         RELEASE = '1.0.0'
