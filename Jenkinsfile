@@ -99,14 +99,16 @@ pipeline {
 
     post {
         failure {
-            emailext body: "${SCRIPT, template='groovy-html.template'}", 
-                      subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
-                      mimeType: 'text/html', to: "ashfaque.s510@gmail.com"
+            emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
+                      body: "${SCRIPT, template='groovy-html.template'}",
+                      mimeType: 'text/html',
+                      to: "teckvisuals10@gmail.com"
         }
         success {
-            emailext body: "${SCRIPT, template='groovy-html.template'}", 
-                      subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful", 
-                      mimeType: 'text/html', to: "ashfaque.s510@gmail.com"
+            emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
+                      body: "${SCRIPT, template='groovy-html.template'}",
+                      mimeType: 'text/html',
+                      to: "teckvisuals1@gmail.com"
         }
     }
 }
