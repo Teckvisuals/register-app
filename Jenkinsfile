@@ -1,10 +1,5 @@
 pipeline {
-    agent { label 'Agent-1' }
-    tools {
-        jdk 'Java17'
-        maven 'Maven3'
-    }
-
+    agent any
     environment {
         APP_NAME = 'teckvisuals-sample-project'
         RELEASE = '1.0.0'
@@ -14,6 +9,8 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         GITHUB_URL = 'https://github.com/teckvisuals/register-app.git'
         JENKINS_SERVER_URL = 'http://3.96.131.176:8080'
+        SONAR_CRED_ID = 'Sonar-Jenks-Cred'
+        GIT_CRED_ID = 'Teckvisuals-Git-Cred'
     }
 
     stages {
@@ -25,7 +22,7 @@ pipeline {
 
         stage("Checkout from SCM") {
             steps {
-                git branch: 'main', credentialsId: 'Teckvisuals-Git-Cred', url: GITHUB_URL
+                checkout([$class: 'GitSCM', branches: [[name: 'main']], doGenerateSubmoduleConfigurations: false, extensions: [], userRemoteConfigs: [[credentialsId: GIT_CRED_ID, url: GITHUB_URL]]])
             }
         }
 
@@ -43,18 +40,21 @@ pipeline {
 
         stage("SonarQube Analysis") {
             steps {
-                script {
-                    withSonarQubeEnv(credentialsId: 'Sonar-Jenks-Cred') { 
-                        sh 'mvn sonar:sonar'
-                    }
+                withSonarQubeEnv(credentialsId: SONAR_CRED_ID) {
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
 
         stage("Quality Gate") {
             steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Jenks-Cred'
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
                 }
             }
         }
@@ -63,7 +63,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', DOCKER_USER) {
-                        docker_image = docker.build "${IMAGE_NAME}:${IMAGE_TAG}"
+                        def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                         docker_image.push()
                         docker_image.push('latest')
                     }
@@ -79,7 +79,7 @@ pipeline {
             }
         }
 
-        stage('Cleanup Artifacts') {
+        stage("Cleanup Artifacts") {
             steps {
                 script {
                     sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
@@ -101,12 +101,12 @@ pipeline {
         failure {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
             body: 'The build has failed. Check the Jenkins console for more details.',
-            to:'teckvisual1@gmail.com'
+            to: 'teckvisual1@gmail.com'
         }
         success {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
             body: "The build was successful. You can access the artifacts at $JENKINS_SERVER_URL/job/\${env.JOB_NAME}/\${env.BUILD_NUMBER}/artifact/",
-            to:'teckvisual1@gmail.com'
+            to: 'teckvisual1@gmail.com'
         }
     }
 }
