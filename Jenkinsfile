@@ -100,15 +100,13 @@ pipeline {
     post {
         failure {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
-                      body: "${SCRIPT, template='groovy-html.template'}",
-                      mimeType: 'text/html',
-                      to: "ashfaque.s510@gmail.com"
+            body: 'The build has failed. Check the Jenkins console for more details.',
+            to: ‘teckvisual1@gmail.com'
         }
         success {
             emailext subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
-                      body: "${SCRIPT, template='groovy-html.template'}",
-                      mimeType: 'text/html',
-                      to: "ashfaque.s510@gmail.com"
+            body: "The build was successful. You can access the artifacts at $JENKINS_SERVER_URL/job/\${env.JOB_NAME}/\${env.BUILD_NUMBER}/artifact/",
+            to: 'teckvisual1@gmail.com'
         }
     }
 }
