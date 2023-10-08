@@ -1,5 +1,8 @@
 pipeline {
     agent { label 'Agent-1' }
+    tools {
+        maven 'Maven3'
+    }
     
     environment {
         APP_NAME = 'teckvisuals-sample-project'
