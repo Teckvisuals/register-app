@@ -1,10 +1,16 @@
 pipeline {
-    agent any
-
+    agent { label 'Agent-1' }
+    tools {
+        jdk 'Java17'
+        maven 'Maven3'
+    }
     environment {
         APP_NAME = 'teckvisuals-sample-project'
         RELEASE = '1.0.0'
         DOCKER_USER = 'teckvisuals'
+        DOCKER_PASS = 'teckvisuals-docker'
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         GITHUB_URL = 'https://github.com/teckvisuals/register-app.git'
         JENKINS_SERVER_URL = 'http://3.96.131.176:8080'
     }
