@@ -127,9 +127,7 @@ pipeline {
     stage('Trigger CD Pipeline') {
             steps {
                 script {
-                    def JENKINS_API_TOKEN = credentials('JENKINS_API_TOKEN')
-                    def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-                    sh "curl -v -k --user Ajoke:$JENKINS_API_TOKEN -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=$IMAGE_TAG' '$JENKINS_SERVER_URL/job/teckvisuals-CD-job/buildWithParameters?token=gitops-token'"
+                    sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-13-232-128-192.ap-south-1.compute.amazonaws.com:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops-token'"
                 }
             }
         }
