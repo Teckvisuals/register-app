@@ -2,7 +2,7 @@ pipeline {
     agent { label 'Agent-1' }
     tools {
         maven 'Maven3'
-        openjdk "java-17-openjdk"
+        jdk "17.0.8.1"
     }
     
     environment {
