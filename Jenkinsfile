@@ -91,23 +91,22 @@ pipeline {
           }
       }
         
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    def IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
-                    def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-                    def imageNameWithTag = "${IMAGE_NAME}:${IMAGE_TAG}"
-            
-                     // Log in to DockerHub
-                    sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
-            
-                    // Push the image
-                    sh "docker push $imageNameWithTag"
+     stage("Build & Push Docker Image") {
+         steps {
+             script {
+                 docker.withRegistry('',DOCKER_PASS) {
+                     docker_image = docker.build "${IMAGE_NAME}"
                 }
-            }
-        }
 
-        stage('Trigger CD Pipeline') {
+                 docker.withRegistry('',DOCKER_PASS) {
+                     docker_image.push("${IMAGE_TAG}")
+                     docker_image.push('latest')
+                 }
+             }
+         }
+     }
+
+    stage('Trigger CD Pipeline') {
             steps {
                 script {
                     def JENKINS_API_TOKEN = credentials('JENKINS_API_TOKEN')
