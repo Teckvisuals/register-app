@@ -96,7 +96,13 @@ pipeline {
                 script {
                     def IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
                     def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    def imageNameWithTag = "${IMAGE_NAME}:${IMAGE_TAG}"
+            
+                     // Log in to DockerHub
+                    sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+            
+                    // Push the image
+                    sh "docker push $imageNameWithTag"
                 }
             }
         }
