@@ -76,17 +76,21 @@ pipeline {
             }
         }
 
-        stage('Login to DockerHub') {
-            steps {
-                script {
-                    def DOCKERHUB_CREDENTIALS = credentials('teckvisuals-docker')
-                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                        sh "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
-                    }
-                }
-            }
-        }
 
+      stage('Login to DockerHub') {
+          steps {
+              script {
+                 docker.withRegistry('', DOCKER_PASS) {
+                     def IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+                     def IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+                     def docker_image = docker.image("${IMAGE_NAME}:${IMAGE_TAG}")
+                     docker_image.push()
+                     docker_image.push('latest')
+                 }
+              }
+          }
+      }
+        
         stage('Push Docker Image') {
             steps {
                 script {
