@@ -60,7 +60,7 @@ pipeline {
                     sleep(10)
                     waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Jenks-Cred'
                     if (qualitygate.status != "OK") {
-                        error("Quality Gate failed: ${qualitygate.status}")
+                    error("Quality Gate failed: ${qualitygate.status}")
                     }
                 }
             }
