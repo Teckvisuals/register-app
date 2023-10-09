@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        APP_NAME = 'teckvisuals-sample-project'
+        APP_NAME = 'register-app-pipeline'
         RELEASE = '1.0.0'
         DOCKER_USER = 'teckvisuals'
         DOCKER_PASS = 'teckvisuals-docker'
