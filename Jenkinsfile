@@ -54,13 +54,13 @@ pipeline {
             }
         }
 
-        //stage('Quality Gate') {
-           // steps {
-            //    timeout(time: 5, unit: 'SECONDS') {
-             //       waitForQualityGate abortPipeline: true
-           //     }
-         //   }
-       // }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'SECONDS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
