@@ -58,14 +58,14 @@ pipeline {
             steps {
                 script {
                     sleep(10)
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Jenks-Cred'
+                    def qualitygate = waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Jenks-Cred'
                     if (qualitygate.status != "OK") {
-                    error("Quality Gate failed: ${qualitygate.status}")
+                        error("Quality Gate failed: ${qualitygate.status}")
                     }
                 }
             }
         }
-
+            
         stage('Build Docker Image') {
             steps {
                 script {
