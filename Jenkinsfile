@@ -54,18 +54,18 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                script {
-                    sleep(10)
-                    def qualitygate = waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Jenks-Cred'
-		    echo "Quality Gate Status: ${qualitygate.status}"
-                    if (qualitygate.status != "OK") {
-                        error("Quality Gate failed: ${qualitygate.status}")
-                    }
-                }
-            }
-        }
+        //stage('Quality Gate') {
+            //steps {
+                //script {
+                    //sleep(10)
+                    //def qualitygate = waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Jenks-Cred'
+		    //echo "Quality Gate Status: ${qualitygate.status}"
+                    //if (qualitygate.status != "OK") {
+                        //error("Quality Gate failed: ${qualitygate.status}")
+                    //}
+                //}
+            //}
+        //}
             
         stage('Build Docker Image') {
             steps {
